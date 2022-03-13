@@ -2,9 +2,8 @@
   "expo": {
     "name": "oauth2sociallogin",
     "slug": "oauth2sociallogin",
+    "scheme": "oauth2sociallogin",
     "version": "1.0.0",
-    "assetBundlePatterns": [
-      "**/*"
-    ]
+    "assetBundlePatterns": ["**/*"]
   }
 }
