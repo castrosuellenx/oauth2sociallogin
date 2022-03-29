@@ -1,14 +1,19 @@
 import React, {useEffect, useState} from 'react';
 import {View, Button, Text, StyleSheet, Image} from 'react-native';
 import * as AuthSession from 'expo-auth-session';
+import axios from 'axios';
 
-const {CLIENT_ID} = process.env;
-const {REDIRECT_URI} = process.env;
+// const {CLIENT_ID} = process.env;
+// const {REDIRECT_URI} = process.env;
 
 type AuthResponse = {
   type: string;
   params: {
     access_token: string;
+    refresh_token: string;
+    expires_in: number;
+    scope: string;
+    token_type: string;
   };
 };
 
@@ -26,10 +31,14 @@ const App: React.FC = () => {
   const [token, setToken] = useState<string>('');
 
   const handleSignIn = async () => {
+    const CLIENT_ID =
+      '687620763558-9bvu4l8qdb8aoe29sb1k4i17sp8kjqem.apps.googleusercontent.com';
+    const REDIRECT_URI =
+      'https://auth.expo.io/@castrosuellenx/oauth2sociallogin';
     const RESPONSE_TYPE = 'token';
     const SCOPE = encodeURI('profile email');
 
-    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}&scope=${SCOPE}`;
+    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}&response_type=${RESPONSE_TYPE}&scope=${SCOPE}`;
 
     const {type, params} = (await AuthSession.startAsync({
       authUrl,
@@ -43,13 +52,11 @@ const App: React.FC = () => {
   useEffect(() => {
     if (token) {
       const loadUser = async () => {
-        const response = await fetch(
+        const response = await axios.get(
           `https://www.googleapis.com/oauth2/v2/userinfo?alt=json&access_token=${token}`
         );
 
-        const userInfo = await response.json();
-
-        setUser(userInfo);
+        setUser(response.data);
       };
 
       loadUser();
